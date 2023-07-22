@@ -261,6 +261,18 @@ std::vector<BitBoard::Position> BitBoard::to_position_vector() const
     return positions;
 }
 
+std::vector<BitBoard> BitBoard::to_bitboard_vector() const
+{
+    std::vector<BitBoard> positions;
+    for (size_t i = 0; i < n_bits; ++i) {
+        auto position = BitBoard::from_index(i);
+        if (test_all(position)) {
+            positions.push_back(position);
+        }
+    }
+    return positions;
+}
+
 std::set<BitBoard::Position> BitBoard::to_position_set() const
 {
     std::set<Position> positions;

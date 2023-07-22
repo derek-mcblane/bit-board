@@ -213,6 +213,7 @@ class BitBoard
     BitBoard& dilate(Direction direction, size_t n = 1);
 
     [[nodiscard]] std::vector<Position> to_position_vector() const;
+    [[nodiscard]] std::vector<BitBoard> to_bitboard_vector() const;
     [[nodiscard]] Position to_position() const;
     [[nodiscard]] std::set<Position> to_position_set() const;
     [[nodiscard]] unsigned long long to_ullong() const
@@ -299,8 +300,10 @@ class BitBoard
     static constexpr Bits negative_slope = 0b10000000'01000000'00100000'00010000'00001000'00000100'00000010'00000001;
     static constexpr Bits positive_slope = 0b00000001'00000010'00000100'00001000'00010000'00100000'01000000'10000000;
 
+    inline static constexpr BitBoard from_index(std::size_t index);
     inline static constexpr BitBoard from_position(const Position& position);
     inline static constexpr Position index_to_position(std::size_t index);
+    inline static constexpr std::size_t position_to_index(const Position& position);
 
     friend void swap(BitBoard& lhs, BitBoard& rhs)
     {
@@ -308,15 +311,26 @@ class BitBoard
     }
 };
 
+
+constexpr BitBoard BitBoard::from_index(const std::size_t index)
+{
+    if (index >= n_bits) {
+        throw std::invalid_argument("position outside of board");
+    }
+    return BitBoard::make_top_left() >> index;
+}
+
 constexpr BitBoard BitBoard::from_position(const Position& position)
 {
     if (position.x() < 0 || position.x() >= board_size || position.y() < 0 || position.y() >= board_size) {
         throw std::invalid_argument("position outside of board");
     }
-    auto board = BitBoard::make_top_left();
-    board.bits_ >>= position.x() * board_size;
-    board.bits_ >>= position.y();
-    return board;
+    return from_index(position_to_index(position));
+}
+
+constexpr std::size_t BitBoard::position_to_index(const Position& position)
+{
+    return position.x() * board_size + position.y();
 }
 
 constexpr BitBoard::Position BitBoard::index_to_position(const std::size_t index)
