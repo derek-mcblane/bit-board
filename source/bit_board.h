@@ -223,60 +223,60 @@ class BitBoard
 
     [[nodiscard]] std::string to_string() const;
 
-    bool operator==(const BitBoard other) const
+    [[nodiscard]] constexpr bool operator==(const BitBoard other) const
     {
         return bits_ == other.bits_;
     }
-    bool operator!=(const BitBoard other) const
+    [[nodiscard]] constexpr bool operator!=(const BitBoard other) const
     {
         return !(*this == other);
     }
-    BitBoard& operator<<=(size_t n)
+    constexpr BitBoard& operator<<=(size_t n)
     {
         bits_ <<= n;
         return *this;
     }
-    BitBoard operator<<(size_t n) const
+    [[nodiscard]] constexpr BitBoard operator<<(size_t n) const
     {
         return BitBoard{*this} <<= n;
     }
-    BitBoard& operator>>=(size_t n)
+    constexpr BitBoard& operator>>=(size_t n)
     {
         bits_ >>= n;
         return *this;
     }
-    BitBoard operator>>(size_t n) const
+    [[nodiscard]] constexpr BitBoard operator>>(size_t n) const
     {
         return BitBoard{*this} >>= n;
     }
-    BitBoard& operator|=(const BitBoard other)
+    constexpr BitBoard& operator|=(const BitBoard other)
     {
         bits_ |= other.bits_;
         return *this;
     }
-    BitBoard operator|(const BitBoard other) const
+    [[nodiscard]] constexpr BitBoard operator|(const BitBoard other) const
     {
         return BitBoard{*this} |= other;
     }
-    BitBoard& operator&=(const BitBoard other)
+    constexpr BitBoard& operator&=(const BitBoard other)
     {
         bits_ &= other.bits_;
         return *this;
     }
-    BitBoard operator&(const BitBoard other) const
+    [[nodiscard]] constexpr BitBoard operator&(const BitBoard other) const
     {
         return BitBoard{*this} &= other;
     }
-    BitBoard& operator^=(const BitBoard other)
+    constexpr BitBoard& operator^=(const BitBoard other)
     {
         bits_ ^= other.bits_;
         return *this;
     }
-    BitBoard operator^(const BitBoard other) const
+    [[nodiscard]] constexpr BitBoard operator^(const BitBoard other) const
     {
         return BitBoard{bits_ ^ other.bits_};
     }
-    BitBoard operator~() const
+    [[nodiscard]] constexpr BitBoard operator~() const
     {
         return BitBoard{~bits_};
     }
