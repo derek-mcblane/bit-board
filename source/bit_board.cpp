@@ -205,11 +205,6 @@ std::size_t BitBoard::count() const
     return std::popcount(bits_);
 }
 
-BitBoard::Position BitBoard::to_position() const
-{
-    return index_to_position(std::countl_zero(bits_));
-}
-
 std::vector<BitBoard::Position> BitBoard::to_position_vector() const
 {
     std::vector<Position> positions;

@@ -229,9 +229,9 @@ class BitBoard
 
     [[nodiscard]] std::vector<Position> to_position_vector() const;
     [[nodiscard]] std::vector<BitBoard> to_bitboard_vector() const;
-    [[nodiscard]] Position to_position() const;
+    [[nodiscard]] constexpr Position to_position() const;
     [[nodiscard]] std::set<Position> to_position_set() const;
-    [[nodiscard]] unsigned long long to_ullong() const
+    [[nodiscard]] constexpr unsigned long long to_ullong() const
     {
         return bits_;
     }
@@ -343,7 +343,6 @@ class BitBoard
     }
 };
 
-
 constexpr BitBoard BitBoard::from_index(const std::size_t index)
 {
     if (index >= n_bits) {
@@ -360,6 +359,11 @@ constexpr BitBoard BitBoard::from_position(const Position& position)
     return from_index(position_to_index(position));
 }
 
+constexpr BitBoard::Position BitBoard::to_position() const
+{
+    return index_to_position(std::countl_zero(bits_));
+}
+
 constexpr std::size_t BitBoard::position_to_index(const Position& position)
 {
     return position.x() * board_size + position.y();
@@ -370,7 +374,6 @@ constexpr BitBoard::Position BitBoard::index_to_position(const std::size_t index
     using T = Position::dimension_type;
     return {static_cast<T>(index / board_size), static_cast<T>(index % board_size)};
 }
-
 
 template <>
 constexpr BitBoard& BitBoard::shift_assign<Direction::up>(const size_t n)
