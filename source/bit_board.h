@@ -127,8 +127,13 @@ class BitBoard
 
     [[nodiscard]] static BitBoard shift(BitBoard board, Direction direction, size_t n = 1);
 
+    [[nodiscard]] static BitBoard shift(BitBoard board, Position relative_offset);
+
+    static BitBoard neighbors_cardinal(BitBoard position);
     static BitBoard neighbors_cardinal(const Position& position);
+    static BitBoard neighbors_diagonal(BitBoard position);
     static BitBoard neighbors_diagonal(const Position& position);
+    static BitBoard neighbors_cardinal_and_diagonal(BitBoard position);
     static BitBoard neighbors_cardinal_and_diagonal(const Position& position);
 
     [[nodiscard]] bool test(const Position& position) const

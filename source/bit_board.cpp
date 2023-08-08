@@ -102,6 +102,11 @@ BitBoard BitBoard::shift(BitBoard board, const Direction direction, const size_t
     return board.shift_assign(direction, n);
 }
 
+BitBoard BitBoard::shift(BitBoard board, Position relative_offset)
+{
+    return board.shift_assign(relative_offset);
+}
+
 BitBoard& BitBoard::dilate(const Direction direction, const size_t n)
 {
     switch (direction) {
@@ -220,21 +225,34 @@ BitBoard& BitBoard::shift_assign(const BitBoard::Position relative_offset)
     return *this;
 }
 
+BitBoard BitBoard::neighbors_cardinal(BitBoard position)
+{
+    return shift<right>(position) | shift<up>(position) | shift<left>(position) | shift<down>(position);
+}
+
 BitBoard BitBoard::neighbors_cardinal(const Position& position)
 {
-    auto board = BitBoard{position};
-    return shift<right>(board) | shift<up>(board) | shift<left>(board) | shift<down>(board);
+    return neighbors_cardinal(BitBoard{position});
+}
+
+BitBoard BitBoard::neighbors_diagonal(BitBoard position)
+{
+    return shift<upright>(position) | shift<upleft>(position) | shift<downleft>(position) | shift<downright>(position);
 }
 
 BitBoard BitBoard::neighbors_diagonal(const Position& position)
 {
-    auto board = BitBoard{position};
-    return shift<upright>(board) | shift<upleft>(board) | shift<downleft>(board) | shift<downright>(board);
+    return neighbors_diagonal(BitBoard{position});
+}
+
+BitBoard BitBoard::neighbors_cardinal_and_diagonal(const BitBoard position)
+{
+    return neighbors_cardinal(position) | neighbors_diagonal(position);
 }
 
 BitBoard BitBoard::neighbors_cardinal_and_diagonal(const Position& position)
 {
-    return neighbors_cardinal(position) | neighbors_diagonal(position);
+    return neighbors_cardinal_and_diagonal(BitBoard{position});
 }
 
 std::size_t BitBoard::count() const
