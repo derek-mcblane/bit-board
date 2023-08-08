@@ -228,14 +228,6 @@ class BitBoard
 
     [[nodiscard]] std::string to_string() const;
 
-    [[nodiscard]] constexpr bool operator==(const BitBoard other) const
-    {
-        return bits_ == other.bits_;
-    }
-    [[nodiscard]] constexpr bool operator!=(const BitBoard other) const
-    {
-        return !(*this == other);
-    }
     constexpr BitBoard& operator<<=(size_t n)
     {
         bits_ <<= n;
@@ -284,6 +276,31 @@ class BitBoard
     [[nodiscard]] constexpr BitBoard operator~() const
     {
         return BitBoard{~bits_};
+    }
+
+    [[nodiscard]] constexpr friend bool operator==(const BitBoard lhs, const BitBoard rhs)
+    {
+        return lhs.bits_ == rhs.bits_;
+    }
+    [[nodiscard]] constexpr friend bool operator!=(const BitBoard lhs, const BitBoard rhs)
+    {
+        return !(lhs == rhs);
+    }
+    [[nodiscard]] constexpr friend bool operator<(const BitBoard lhs, const BitBoard rhs)
+    {
+        return lhs.bits_ < rhs.bits_;
+    }
+    [[nodiscard]] constexpr friend bool operator>(const BitBoard lhs, const BitBoard rhs)
+    {
+        return rhs < lhs;
+    }
+    [[nodiscard]] constexpr friend bool operator<=(const BitBoard lhs, const BitBoard rhs)
+    {
+        return !(lhs > rhs);
+    }
+    [[nodiscard]] constexpr friend bool operator>=(const BitBoard lhs, const BitBoard rhs)
+    {
+        return !(lhs < rhs);
     }
 
   private:
