@@ -39,7 +39,7 @@ class BitBoard
     constexpr BitBoard(BitBoard&& other) = default;
     constexpr BitBoard& operator=(BitBoard&&) = default;
 
-    static BitBoard make_top_right()
+    static constexpr BitBoard make_top_right()
     {
         return BitBoard{top_right};
     }
@@ -119,8 +119,18 @@ class BitBoard
         return ~BitBoard{};
     }
 
+    static constexpr BitBoard make_row(const size_t n)
+    {
+        return BitBoard::shift<Direction::down>(make_top_edge(), n);
+    }
+
+    static constexpr BitBoard make_column(const size_t n)
+    {
+        return BitBoard::shift<Direction::right>(make_left_edge(), n);
+    }
+
     template <Direction D>
-    [[nodiscard]] static BitBoard shift(BitBoard board, size_t n = 1)
+    [[nodiscard]] static constexpr BitBoard shift(BitBoard board, const size_t n = 1)
     {
         return board.shift_assign<D>(n);
     }
@@ -194,7 +204,7 @@ class BitBoard
     [[nodiscard]] bool on_any_edge() const;
 
     template <Direction D>
-    BitBoard& shift_assign(size_t n = 1);
+    constexpr BitBoard& shift_assign(size_t n = 1);
 
     BitBoard& shift_assign(Direction direction, size_t n = 1);
 
@@ -359,4 +369,60 @@ constexpr BitBoard::Position BitBoard::index_to_position(const std::size_t index
 {
     using T = Position::dimension_type;
     return {static_cast<T>(index / board_size), static_cast<T>(index % board_size)};
+}
+
+
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::up>(const size_t n)
+{
+    bits_ <<= (board_size * n);
+    return *this;
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::down>(const size_t n)
+{
+    bits_ >>= (board_size * n);
+    return *this;
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::left>(const size_t n)
+{
+    Bits wall{0};
+    for (size_t i = 0; i < n; i++) {
+        wall |= (right_edge << i);
+    }
+    bits_ <<= n;
+    bits_ &= ~wall;
+    return *this;
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::right>(const size_t n)
+{
+    Bits wall{0};
+    for (size_t i = 0; i < n; i++) {
+        wall |= (left_edge >> i);
+    }
+    bits_ >>= n;
+    bits_ &= ~wall;
+    return *this;
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::upright>(const size_t n)
+{
+    return shift_assign<Direction::up>(n).shift_assign<Direction::right>(n);
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::upleft>(const size_t n)
+{
+    return shift_assign<Direction::up>(n).shift_assign<Direction::left>(n);
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::downright>(const size_t n)
+{
+    return shift_assign<Direction::down>(n).shift_assign<Direction::right>(n);
+}
+template <>
+constexpr BitBoard& BitBoard::shift_assign<Direction::downleft>(const size_t n)
+{
+    return shift_assign<Direction::down>(n).shift_assign<Direction::left>(n);
 }
