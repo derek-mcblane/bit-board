@@ -1,7 +1,9 @@
 #include "bit_board.h"
 
-#include <bit>
 #include <cassert>
+#include <cstdint>
+
+#include <bit>
 #include <exception>
 #include <set>
 #include <vector>

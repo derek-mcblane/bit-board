@@ -3,6 +3,9 @@
 #include "vec2.h"
 
 #include <cassert>
+#include <climits>
+#include <cstdint>
+
 #include <set>
 #include <vector>
 
