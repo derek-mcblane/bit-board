@@ -31,8 +31,8 @@ class BitBoard
     static constexpr std::size_t n_bits = 64;
     static_assert(sizeof(Bits) * CHAR_BIT == n_bits, "number of bits mismatch");
 
-    constexpr explicit BitBoard() : BitBoard(0) {}
-    constexpr explicit BitBoard(const Bits bits) : bits_(bits) {}
+    constexpr explicit BitBoard() noexcept : BitBoard(0) {}
+    constexpr explicit BitBoard(const Bits bits) noexcept : bits_(bits) {}
     constexpr explicit BitBoard(const Position& position) : BitBoard(from_position(position)) {}
     explicit BitBoard(const std::string& board);
 
@@ -42,92 +42,75 @@ class BitBoard
     constexpr BitBoard(BitBoard&& other) = default;
     constexpr BitBoard& operator=(BitBoard&&) = default;
 
-    static constexpr BitBoard make_top_right()
+    static constexpr BitBoard make_top_right() noexcept
     {
         return BitBoard{top_right};
     }
-
-    static constexpr BitBoard make_top_left()
+    static constexpr BitBoard make_top_left() noexcept
     {
         return BitBoard{top_left};
     }
-
-    static constexpr BitBoard make_bottom_left()
+    static constexpr BitBoard make_bottom_left() noexcept
     {
         return BitBoard{bottom_left};
     }
-
-    static constexpr BitBoard make_bottom_right()
+    static constexpr BitBoard make_bottom_right() noexcept
     {
         return BitBoard{bottom_right};
     }
-
-    static constexpr BitBoard make_right_edge()
+    static constexpr BitBoard make_right_edge() noexcept
     {
         return BitBoard{right_edge};
     }
-
-    static constexpr BitBoard make_top_right_edge()
+    static constexpr BitBoard make_top_right_edge() noexcept
     {
         return BitBoard{top_right_edge};
     }
-
-    static constexpr BitBoard make_top_edge()
+    static constexpr BitBoard make_top_edge() noexcept
     {
         return BitBoard{top_edge};
     }
-
-    static constexpr BitBoard make_top_left_edge()
+    static constexpr BitBoard make_top_left_edge() noexcept
     {
         return BitBoard{top_left_edge};
     }
-
-    static constexpr BitBoard make_left_edge()
+    static constexpr BitBoard make_left_edge() noexcept
     {
         return BitBoard{left_edge};
     }
-
-    static constexpr BitBoard make_bottom_left_edge()
+    static constexpr BitBoard make_bottom_left_edge() noexcept
     {
         return BitBoard{bottom_left_edge};
     }
-
-    static constexpr BitBoard make_bottom_edge()
+    static constexpr BitBoard make_bottom_edge() noexcept
     {
         return BitBoard{bottom_edge};
     }
-
-    static constexpr BitBoard make_bottom_right_edge()
+    static constexpr BitBoard make_bottom_right_edge() noexcept
     {
         return BitBoard{bottom_right_edge};
     }
-
-    static constexpr BitBoard make_all_edge()
+    static constexpr BitBoard make_all_edge() noexcept
     {
         return BitBoard{all_edge};
     }
-
-    static constexpr BitBoard make_positive_slope()
+    static constexpr BitBoard make_positive_slope() noexcept
     {
         return BitBoard{positive_slope};
     }
-
-    static constexpr BitBoard make_negative_slope()
+    static constexpr BitBoard make_negative_slope() noexcept
     {
         return BitBoard{negative_slope};
     }
-
-    static constexpr BitBoard make_full()
+    static constexpr BitBoard make_full() noexcept
     {
-        return ~BitBoard{};
+        return ~(BitBoard{});
     }
-
-    static constexpr BitBoard make_row(const size_t n)
+    static constexpr BitBoard make_row(const size_t n) noexcept
     {
         return BitBoard::shift<Direction::down>(make_top_edge(), n);
     }
-
-    static constexpr BitBoard make_column(const size_t n)
+    static constexpr BitBoard make_column(const size_t n) noexcept
     {
         return BitBoard::shift<Direction::right>(make_left_edge(), n);
     }
@@ -137,41 +120,39 @@ class BitBoard
     {
         return board.shift_assign<D>(n);
     }
-
     [[nodiscard]] static BitBoard shift(BitBoard board, Direction direction, size_t n = 1);
-
     [[nodiscard]] static BitBoard shift(BitBoard board, Position relative_offset);
 
-    static BitBoard neighbors_cardinal(BitBoard position);
-    static BitBoard neighbors_cardinal(const Position& position);
-    static BitBoard neighbors_diagonal(BitBoard position);
-    static BitBoard neighbors_diagonal(const Position& position);
-    static BitBoard neighbors_cardinal_and_diagonal(BitBoard position);
-    static BitBoard neighbors_cardinal_and_diagonal(const Position& position);
+    static BitBoard neighbors_cardinal(BitBoard position) noexcept;
+    static BitBoard neighbors_cardinal(const Position& position) noexcept;
+    static BitBoard neighbors_diagonal(BitBoard position) noexcept;
+    static BitBoard neighbors_diagonal(const Position& position) noexcept;
+    static BitBoard neighbors_cardinal_and_diagonal(BitBoard position) noexcept;
+    static BitBoard neighbors_cardinal_and_diagonal(const Position& position) noexcept;
 
-    [[nodiscard]] bool test(const Position& position) const
+    [[nodiscard]] bool test(const Position& position) const noexcept
     {
         return test_any(BitBoard{position});
     }
 
-    [[nodiscard]] bool test_any(const BitBoard other) const
+    [[nodiscard]] bool test_any(const BitBoard other) const noexcept
     {
         return !(*this & other).empty();
     }
 
-    [[nodiscard]] bool test_all(const BitBoard other) const
+    [[nodiscard]] bool test_all(const BitBoard other) const noexcept
     {
         return (*this & other) == other;
     }
 
-    [[nodiscard]] bool empty() const
+    [[nodiscard]] bool empty() const noexcept
     {
         return bits_ == 0U;
     }
 
-    [[nodiscard]] std::size_t count() const;
+    [[nodiscard]] constexpr std::size_t count() const noexcept;
 
-    BitBoard& set(const BitBoard other)
+    BitBoard& set(const BitBoard other) noexcept
     {
         bits_ |= other.bits_;
         return *this;
@@ -182,7 +163,7 @@ class BitBoard
         return set(BitBoard{position});
     }
 
-    BitBoard& clear(const BitBoard other)
+    BitBoard& clear(const BitBoard other) noexcept
     {
         *this &= ~other;
         return *this;
@@ -193,34 +174,34 @@ class BitBoard
         return clear(BitBoard{position});
     }
 
-    BitBoard& clear_all()
+    BitBoard& clear_all() noexcept
     {
         bits_ = 0U;
         return *this;
     }
 
     template <Direction D>
-    [[nodiscard]] bool on_edge() const;
+    [[nodiscard]] bool on_edge() const noexcept;
 
-    [[nodiscard]] bool on_edge(Direction direction) const;
+    [[nodiscard]] bool on_edge(Direction direction) const noexcept;
 
-    [[nodiscard]] bool on_any_edge() const;
-
-    template <Direction D>
-    constexpr BitBoard& shift_assign(size_t n = 1);
-
-    BitBoard& shift_assign(Direction direction, size_t n = 1);
-
-    BitBoard& shift_assign(Position relative_offset);
+    [[nodiscard]] bool on_any_edge() const noexcept;
 
     template <Direction D>
-    BitBoard& dilate()
+    constexpr BitBoard& shift_assign(size_t n = 1) noexcept;
+
+    BitBoard& shift_assign(Direction direction, size_t n = 1) noexcept;
+
+    BitBoard& shift_assign(Position relative_offset) noexcept;
+
+    template <Direction D>
+    BitBoard& dilate() noexcept
     {
         return *this |= BitBoard::shift<D>(*this);
     }
 
     template <Direction D>
-    BitBoard& dilate(const size_t n)
+    BitBoard& dilate(const size_t n) noexcept
     {
         for (size_t i = 0; i < n; i++) {
             dilate<D>();
@@ -228,18 +209,18 @@ class BitBoard
         return *this;
     }
 
-    BitBoard& dilate(Direction direction, size_t n = 1);
+    BitBoard& dilate(Direction direction, size_t n = 1) noexcept;
 
-    [[nodiscard]] std::vector<Position> to_position_vector() const;
-    [[nodiscard]] std::vector<BitBoard> to_bitboard_vector() const;
-    [[nodiscard]] constexpr Position to_position() const;
-    [[nodiscard]] std::set<Position> to_position_set() const;
     [[nodiscard]] constexpr unsigned long long to_ullong() const
     {
         return bits_;
     }
+    [[nodiscard]] constexpr Position to_position() const;
+    [[nodiscard]] std::vector<Position> to_position_vector() const noexcept;
+    [[nodiscard]] std::vector<BitBoard> to_bitboard_vector() const noexcept;
+    [[nodiscard]] std::set<Position> to_position_set() const noexcept;
 
-    [[nodiscard]] std::string to_string() const;
+    [[nodiscard]] std::string to_string() const noexcept;
 
     constexpr BitBoard& operator<<=(size_t n)
     {
@@ -337,14 +318,19 @@ class BitBoard
 
     inline static constexpr BitBoard from_index(std::size_t index);
     inline static constexpr BitBoard from_position(const Position& position);
-    inline static constexpr Position index_to_position(std::size_t index);
-    inline static constexpr std::size_t position_to_index(const Position& position);
+    inline static constexpr Position index_to_position(std::size_t index) noexcept;
+    inline static constexpr std::size_t position_to_index(const Position& position) noexcept;
 
     friend void swap(BitBoard& lhs, BitBoard& rhs)
     {
         std::swap(lhs.bits_, rhs.bits_);
     }
 };
+
+constexpr std::size_t BitBoard::count() const noexcept
+{
+    return std::popcount(bits_);
+}
 
 constexpr BitBoard BitBoard::from_index(const std::size_t index)
 {
@@ -364,34 +350,35 @@ constexpr BitBoard BitBoard::from_position(const Position& position)
 
 constexpr BitBoard::Position BitBoard::to_position() const
 {
+    assert(count() == 1U);
     return index_to_position(std::countl_zero(bits_));
 }
 
-constexpr std::size_t BitBoard::position_to_index(const Position& position)
+constexpr std::size_t BitBoard::position_to_index(const Position& position) noexcept
 {
     return position.x() * board_size + position.y();
 }
 
-constexpr BitBoard::Position BitBoard::index_to_position(const std::size_t index)
+constexpr BitBoard::Position BitBoard::index_to_position(const std::size_t index) noexcept
 {
     using T = Position::dimension_type;
     return {static_cast<T>(index / board_size), static_cast<T>(index % board_size)};
 }
 
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::up>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::up>(const size_t n) noexcept
 {
     bits_ <<= (board_size * n);
     return *this;
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::down>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::down>(const size_t n) noexcept
 {
     bits_ >>= (board_size * n);
     return *this;
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::left>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::left>(const size_t n) noexcept
 {
     Bits wall{0};
     for (size_t i = 0; i < n; i++) {
@@ -402,7 +389,7 @@ constexpr BitBoard& BitBoard::shift_assign<Direction::left>(const size_t n)
     return *this;
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::right>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::right>(const size_t n) noexcept
 {
     Bits wall{0};
     for (size_t i = 0; i < n; i++) {
@@ -413,22 +400,22 @@ constexpr BitBoard& BitBoard::shift_assign<Direction::right>(const size_t n)
     return *this;
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::upright>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::upright>(const size_t n) noexcept
 {
     return shift_assign<Direction::up>(n).shift_assign<Direction::right>(n);
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::upleft>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::upleft>(const size_t n) noexcept
 {
     return shift_assign<Direction::up>(n).shift_assign<Direction::left>(n);
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::downright>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::downright>(const size_t n) noexcept
 {
     return shift_assign<Direction::down>(n).shift_assign<Direction::right>(n);
 }
 template <>
-constexpr BitBoard& BitBoard::shift_assign<Direction::downleft>(const size_t n)
+constexpr BitBoard& BitBoard::shift_assign<Direction::downleft>(const size_t n) noexcept
 {
     return shift_assign<Direction::down>(n).shift_assign<Direction::left>(n);
 }
