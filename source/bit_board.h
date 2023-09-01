@@ -6,6 +6,7 @@
 #include <climits>
 #include <cstdint>
 
+#include <bit>
 #include <set>
 #include <vector>
 
@@ -150,7 +151,15 @@ class BitBoard
         return bits_ == 0U;
     }
 
-    [[nodiscard]] constexpr std::size_t count() const noexcept;
+    [[nodiscard]] constexpr std::size_t count() const noexcept
+    {
+        return std::popcount(bits_);
+    }
+
+    [[nodiscard]] constexpr bool has_single_position() const noexcept
+    {
+        return std::has_single_bit(bits_);
+    }
 
     BitBoard& set(const BitBoard other) noexcept
     {
@@ -327,11 +336,6 @@ class BitBoard
     }
 };
 
-constexpr std::size_t BitBoard::count() const noexcept
-{
-    return std::popcount(bits_);
-}
-
 constexpr BitBoard BitBoard::from_index(const std::size_t index)
 {
     if (index >= n_bits) {
@@ -350,7 +354,7 @@ constexpr BitBoard BitBoard::from_position(const Position& position)
 
 constexpr BitBoard::Position BitBoard::to_position() const
 {
-    assert(count() == 1U);
+    assert(has_single_position());
     return index_to_position(std::countl_zero(bits_));
 }
 
