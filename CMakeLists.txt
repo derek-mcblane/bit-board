@@ -5,7 +5,7 @@ project(BitBoard VERSION 0.1.0)
 add_subdirectory(external)
 add_subdirectory(source)
 
-option(${PROJECT_NAME}_ENABLE_TESTING "Enable project tests" ON)
+option(${PROJECT_NAME}_ENABLE_TESTING "Enable project tests" OFF)
 if (${${PROJECT_NAME}_ENABLE_TESTING})
     enable_testing()
     add_subdirectory(tests)
